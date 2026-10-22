@@ -25,7 +25,7 @@ npx skills add Comet32/skills
 
 | Skill | 做什么 | 客户端 |
 |---|---|---|
-| [`ambitious`](skills/ambitious/SKILL.md) | 把一个任务或 prompt 沿高度、深度、广度三个方向升级成更有雄心的版本。先交付方案并停下等你选方向，确认后再执行；宣告完成前必须跑外部裁判。用 `/ambitious <任务>` 调用 | 全部 |
+| [`ambitious`](skills/ambitious/SKILL.md) | 把一个任务或 prompt 沿高度、深度、广度三个方向升级成更有雄心的版本。先交付方案并停下等你选方向，确认后再执行；宣告完成前必须跑外部裁判。用 `/ambitious <任务>` 调用。skill 本身用英文写，回复跟随你使用的语言 | 全部 |
 | [`grill-afk`](skills/grill-afk/SKILL.md) | 自动运行的需求拷问：用红队循环代替逐条问人，产出一份 PRD，加上一份只有人能回答的问题清单 | 全部；其中的子代理分工按 Claude Code 写，其他客户端可能退化为单线程执行 |
 | [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | 把 mattpocock/skills 同步到最新上游，重新应用本地补丁，并总结上游变化 | 仅 Claude Code。标为 internal，`npx skills add` 默认不会列出它 |
 

@@ -1,92 +1,94 @@
 ---
 name: ambitious
-description: 把一个任务或 prompt 按高度、深度、广度三个方向升级成更有雄心的版本，确认后再执行。仅在用户明确提到 ambitious 时使用。
+description: Upgrade a task or prompt into a more ambitious version along three axes (altitude, depth, range), and execute only after the user confirms. Use only when the user explicitly mentions ambitious.
 disable-model-invocation: true
 ---
 
 # Ambitious
 
-把用户给的任务（或一段 prompt）沿三根互相独立的轴升级，产出一个可直接执行的升级版 prompt，**停下等用户选方向**，确认后再做。
+Upgrade the user's task (or a prompt) along three independent axes, produce an upgraded prompt that can be run as is, **stop and wait for the user to pick a direction**, and only then do the work.
 
-- **Altitude（高度）**：沿「目标」阶梯往上——**做哪件事**。对任务问「为什么」，把更上层的目标交给模型。
-- **Depth（深度）**：任务不变，往下钻材料、工具、验证——**这件事做到多专业**。
-- **Range（广度）**：横向调动更多学科——**动用多少个领域**。
+- **Altitude**: climb the ladder of goals — **which thing to do**. Ask "why" of the task and hand the model the goal one level up.
+- **Depth**: same task, drill down into materials, tools and verification — **how professionally it gets done**.
+- **Range**: bring in more disciplines sideways — **how many fields it draws on**.
 
-沿 altitude 阶梯往下（把步骤拆细交给模型）是微观管理，与 depth 无关；depth 永远是「同一件事，由模型用顶尖专家的方法做」。
+Climbing down the altitude ladder (breaking the task into finer steps for the model) is micromanagement and has nothing to do with depth; depth always means "the same task, done by the model the way a top expert would do it".
 
-出处：Felix Rieseberg, *How to be more ambitious: A tutorial for humans with models*（2026-10-13）。Speed（同样的事做得更快）不在本 skill 范围。
+Source: Felix Rieseberg, *How to be more ambitious: A tutorial for humans with models* (2026-10-13). Speed (doing the same thing faster) is out of scope for this skill.
 
-## 步骤
+Write everything the user reads in the user's language.
 
-### 1. 复述并闸门
+## Steps
 
-用一句话复述任务原样是什么、现在由谁决定「怎么做」：用户已把步骤规定好（微观管理，第 3 步往上抬的空间大），还是已交给模型。
+### 1. Restate and gate
 
-**闸门**：任务是一步就完、做完没有下游决策或复用价值（改错字、查一个事实、格式转换）时，直接告诉用户「这个不值得升级」，给出普通做法，结束。
+In one sentence, restate what the task literally is and who currently decides "how": whether the user has already prescribed the steps (micromanagement, so step 3 has a lot of room to climb) or has left that to the model.
 
-**交付物**：默认在当前环境执行；用户表明 prompt 是拿去别处用的（另一个仓库、另一个 agent、另一台机器）时，交付物是「只要 prompt」。
+**Gate**: when the task is done in one step and leaves no downstream decision or reuse value (fixing a typo, looking up a fact, converting a format), tell the user "this isn't worth upgrading", give the ordinary way to do it, and stop.
 
-完成标准：一句复述 + 闸门结论（继续 / 结束）+ 交付物（执行 / 只要 prompt）。
+**Deliverable**: by default the work is executed in the current environment. When the user makes clear the prompt is meant for somewhere else (another repo, another agent, another machine), the deliverable is "prompt only".
 
-### 2. 查环境
+Done when: a one-sentence restatement + the gate verdict (continue / stop) + the deliverable (execute / prompt only).
 
-先读项目自己的约定和自建工具（`CLAUDE.md` / `AGENTS.md` / `CONTEXT.md` / `docs/adr/`、自建插件或脚本），升级方案要建在它们之上。再实际查一遍：有哪些数据源、MCP 连接器、CLI、仓库、测试/脚本可用，以及有哪些**行为数据**（日志、使用记录、复习记录、对话记录）能反映现状。后面每个方向的可行性都以这里查到的为准，不凭假设。
+### 2. Survey the environment
 
-查到后面三步都有输入就停，不做全量普查。涉及隐私的数据源（对话记录、个人日志、含凭证的文件）只记下存在，读取内容前列入第 6 步的前提清单征得同意。
+First read the project's own conventions and home-grown tools (`CLAUDE.md` / `AGENTS.md` / `CONTEXT.md` / `docs/adr/`, in-house plugins or scripts); the upgrade has to build on them. Then actually check what is available: data sources, MCP connectors, CLIs, repos, tests and scripts, and any **behavioural data** (logs, usage records, review history, conversation history) that reflects the current state. Every direction's feasibility later rests on what you find here, not on assumptions.
 
-交付物是「只要 prompt」时，当前环境不是执行环境：跳过实地查询，把目标环境需要具备的数据源和工具列进第 6 步的前提清单。
+Stop once the next three steps have their inputs; this is not a full census. For privacy-sensitive sources (conversation history, personal logs, files containing credentials), record only that they exist; reading their contents goes on the step 6 prerequisites for the user's consent.
 
-完成标准：一张「可用 / 缺失」清单，每项是具体名字（某个 MCP、某个表、某个命令）加一个关键数字，不是类别。任务本身不依赖数据或工具（文案、设计、方案类）时，清单如实写短，写明「无」即可。
+When the deliverable is "prompt only", the current environment is not where the work will run: skip the hands-on survey and put the data sources and tools the target environment must have on the step 6 prerequisites.
+
+Done when: an "available / missing" list where every item is a specific name (a particular MCP, table or command) plus one key number, not a category. When the task itself does not depend on data or tools (copy, design, planning work), keep the list honestly short; writing "none" is fine.
 
 ### 3. Altitude
 
-1. 对任务连续问「为什么要做这个」，搭一条至少 3 级的目标阶梯，从原任务一直问到碰到「这件事/这个制度存在的根本理由」。
-2. 每一级标注模型能否**自己感知**（拿到现状数据）和**自己验证**（确认做对了）。两者都具备的最高一级是推荐级；更高的级别列出缺什么。
-3. 信号：这件事之后要开会讨论 → 值得抬高。创意类工作（作品本身即目的）→ altitude 让位给 depth / range。目标高到模型既感知不到也验证不了（「去赚钱」）→ 不选。
+1. Keep asking "why are we doing this" and build a goal ladder of at least 3 rungs, from the original task up to the point where you hit the fundamental reason the thing (or the institution behind it) exists.
+2. Mark each rung with whether the model can **sense** it on its own (get data on the current state) and **verify** it on its own (confirm it got it right). The highest rung with both is the recommended rung; for the rungs above it, list what is missing.
+3. Signals: the result will be discussed in a meeting afterwards → worth raising. Creative work (the artefact is the point) → altitude gives way to depth and range. A goal so high the model can neither sense nor verify it ("go make money") → don't pick it.
 
-**原任务本身已经是一个高而模糊的愿望**（「让 X 更好用」「提升 Y」）时，这一步的活不是继续往上爬，而是把它**钉到一个可测的级别**：找出离原任务最近、感知和验证都成立的那一级，把「更好」翻译成一个能算出来的指标。
+**When the original task is already a high, vague wish** ("make X easier to use", "improve Y"), the job of this step is not to keep climbing but to **pin it to a measurable rung**: find the rung nearest the original task where sensing and verifying both hold, and translate "better" into a metric that can be computed.
 
-完成标准：阶梯每一级都有「感知、验证」标注（✓ / △ 部分 / ✗），推荐级的「更好」已对应到一个具体指标。
+Done when: every rung of the ladder carries sense and verify marks (✓ / △ partial / ✗), and "better" on the recommended rung maps to one specific metric.
 
 ### 4. Depth
 
-对推荐级的任务逐条回答，每条落到具体对象：
+For the task at the recommended rung, answer each of these, every answer landing on a concrete object:
 
-1. **顶尖专业人士**在这里会额外做、但用户没要求的事。
-2. 他们会从哪种**最原始的材料**入手（原始日志、原始表、源码），而非已被消化过的报表。
-3. 他们用的**具体方法和工具**（数据库、统计模型、profiler、基准脚本……）。要的是换方法，措辞跟着换只是表象。
-4. **外部裁判**：除模型和用户之外，什么能证明结果对——测试、编译、回测、在 held-out 数据上的预测、与权威系统对账。优先选模型自己能跑、能立刻拿到反馈的。裁判用的**考题来自真实数据或用户亲手提供**，并留出一份 held-out 只用于验收；模型自己出的题只能当 dev 集。
+1. What a **top professional** would do here in addition, without being asked.
+2. Which **rawest material** they would start from (raw logs, raw tables, source code) rather than an already digested report.
+3. The **specific methods and tools** they use (databases, statistical models, profilers, benchmark scripts…). The point is a change of method; a change of wording is only the surface.
+4. **External judge**: besides the model and the user, what can prove the result is right — tests, a compiler, a backtest, predictions on held-out data, reconciliation against an authoritative system. Prefer something the model can run itself and get immediate feedback from. The judge's **test questions come from real data or from the user directly**, with a held-out share kept for acceptance only; questions the model writes itself count only as a dev set.
 
-再加两项：
-- **复现假设**：先检验用户对**问题本身**的定义——把「问题出在 X」改写成「试着从原始数据复现它」，并列出其他可能的问题定义。此时用户还没确认方向，检验只用第 2 步里已可读的数据、控制在几条查询或一次复现脚本的量级；需要大量分析或读取隐私数据的检验，写成方向选项的第一步，确认后再做。问题定义一旦被数据推翻或改写，这就是整份方案最重要的发现，放到第 6 步最前面。有可能时，追加「找出一个还没人知道的信号，并在没见过的数据上证明它」。
-- **不合理的目标**：以第 2 步实测的数字为基线，把指标定到一个量级之外（基线 10s → 目标 200ms，而非 5s），并在 prompt 里写明「这完全可以解决，持续推进」。还没有基线时，升级版 prompt 的第一步是测出基线，再按它定目标。
+Plus two more:
+- **Reproduce the hypothesis**: first test the user's definition of **the problem itself** — rewrite "the problem is X" as "try to reproduce it from the raw data", and list other possible problem definitions. The user has not confirmed a direction yet, so this check uses only data already readable in step 2 and stays at the scale of a few queries or one reproduction script; a check that needs heavy analysis or private data becomes the first step of a direction option, done after confirmation. Once the data overturns or rewrites the problem definition, that is the most important finding of the whole proposal and goes at the very top of step 6. Where possible, add "find a signal nobody knows about yet, and prove it on unseen data".
+- **Unreasonable target**: taking the number measured in step 2 as the baseline, set the metric an order of magnitude out (baseline 10s → target 200ms, not 5s), and write into the prompt "This is entirely solvable; keep going." When there is no baseline yet, the first step of the upgraded prompt is to measure it, then set the target from it.
 
-完成标准：四问每一条都点名了具体的文件、表、命令或指标，确实没有对应物的标「不适用」并附一句理由；外部裁判不能标不适用，是一个可运行的东西（非代码任务就用真实样本对照、可计算的指标或真实读者的反应），考题来源已写明；问题定义已被数据支持、改写，或标为「待验证」并写明验证方式。
+Done when: each of the four questions names a specific file, table, command or metric, and one that genuinely has no counterpart is marked "N/A" with a one-line reason; the external judge can never be N/A and is something runnable (for non-code work: comparison against real samples, a computable metric, or real readers' reactions), with the source of its questions stated; the problem definition is supported by data, rewritten, or marked "unverified" with how to verify it.
 
 ### 5. Range
 
-1. **名词换动词**：把任务对象（「一份幻灯片」「一个页面」）改写成一句动词描述——它实际在让谁、在多长时间里、做成什么。
-2. **组建团队**：按动词逐个推出能贡献视角的学科，至少含一个**红队**（专业地怀疑这份产出的人，如做空者、法务会计、安全研究员）。
-3. 每个成员写成「**做**该职业会**做**的哪件具体事」，形成方法清单；产出风格保持原样，借的是方法。可用 subagent 并行承担不同成员。
+1. **Nouns to verbs**: rewrite the task's object ("a slide deck", "a page") as one verb sentence — whom it actually gets to do what, within how long.
+2. **Assemble the team**: from the verbs, derive one by one the disciplines that can contribute a perspective, including at least one **red team** (someone who professionally doubts this output, such as a short seller, a forensic accountant, a security researcher).
+3. Write each member as "the specific thing that profession would **do**", giving a list of methods; keep the output's own style, and borrow the methods. Subagents can take on different members in parallel.
 
-完成标准：动词句一句；每个成员都对应一个动词和一个具体动作。
+Done when: one verb sentence; every member maps to a verb and a concrete action.
 
-### 6. 交付方案并停下
+### 6. Deliver the proposal and stop
 
-第 2–5 步是工作底稿，交付的是结论。用中文按这个顺序输出，让用户读完前三部分就能做决定：
+Steps 2–5 are working notes; what you deliver is the conclusion. Output in this order, so the user can decide after reading the first three parts:
 
-1. **结论先行**（≤ 5 行）：第一行是任务复述 + 「值得升级」；接着是最重要的发现（尤其是第 4 步改写了的问题定义，附支撑它的关键数字）+ 推荐方向。
-2. **方向选项**：2–3 个（例如「只加深度」「钉到可测级别 + 加深」「再加广度团队」），每个写清得失和**代价**（大致耗时、subagent 数、用户要投入的事）。交付物是「执行」时，另附一项「只要 prompt，不执行」。
-3. **前提清单**：必须由用户补的（权限、数据、亲手写的考题、隐私数据的读取同意），各自影响哪个方向。
-4. **升级版 prompt**：对应推荐方向，一整段可直接复制执行。
-5. **依据**（放在最后，精简；终端无法折叠，标题写成「依据（可跳过）」，与前四部分用分隔线隔开）：2×2 定位（重点防「高而浅」：目标抬高了，就必须同时配上第 4 步的外部裁判）、目标阶梯表、四问要点、团队表，各一张表或几行，不复述推导过程。
+1. **Bottom line first** (≤ 5 lines): the first line is the task restatement + "worth upgrading"; then the most important finding (especially a problem definition rewritten in step 4, with the key number behind it) + the recommended direction.
+2. **Direction options**: 2–3 of them (for example "depth only", "pin to a measurable rung + depth", "add a range team"), each with its trade-offs and **cost** (rough time, number of subagents, what the user has to put in). When the deliverable is "execute", add one more option: "prompt only, don't execute".
+3. **Prerequisites**: what only the user can supply (permissions, data, hand-written test questions, consent to read private data), and which direction each one affects.
+4. **Upgraded prompt**: for the recommended direction, one block that can be copied and run as is.
+5. **Rationale** (last, kept lean; terminals can't fold, so title it "Rationale (skippable)" and separate it from the first four parts with a horizontal rule): the 2×2 position (guard especially against "high-but-shallow": once the goal is raised, it must come with the external judge from step 4), the goal ladder table, the key points of the four questions, the team table — one table or a few lines each, without retelling the reasoning.
 
-然后停下，等用户选方向或修改。
+Then stop and wait for the user to pick a direction or make changes.
 
-完成标准：五部分齐全；结论先行部分不超过 5 行；升级版 prompt 中写明了外部裁判、考题来源及运行方式。
+Done when: all five parts are present; the bottom line is at most 5 lines; the upgraded prompt states the external judge, the source of its test questions and how to run it.
 
-### 7. 执行（用户确认后）
+### 7. Execute (after the user confirms)
 
-交付物是「只要 prompt」，或用户选了「只要 prompt，不执行」时，第 6 步即终点。
+When the deliverable is "prompt only", or the user picked "prompt only, don't execute", step 6 is the end.
 
-其余情况以选定方向的升级版 prompt 为执行规格：用户选的不是推荐方向，先补写该方向的 prompt 再开始；用户改过 prompt，以改后版本为准。宣告完成前必须跑一次外部裁判，并把它的实际输出作为证据汇报；裁判没跑或没过，就报告当前状态，不宣告完成。需要真人参与的裁判（真实读者、用户亲手验收）还没做时，模型能跑的裁判照常跑完并汇报，整体状态报告为「待验收」而不是「完成」，并写明还差谁、做什么。
+Otherwise the upgraded prompt for the chosen direction is the execution spec: if the user picked a direction other than the recommended one, first write that direction's prompt, then start; if the user edited the prompt, the edited version wins. Before declaring done, run the external judge and report its actual output as evidence; if the judge did not run or did not pass, report the current state and do not declare done. When a judge that needs a real person (real readers, the user's own acceptance check) has not happened yet, still run and report every judge the model can run, report the overall state as "pending acceptance" rather than "done", and say who still needs to do what.

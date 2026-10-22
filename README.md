@@ -25,7 +25,7 @@ The installer is [vercel-labs/skills](https://github.com/vercel-labs/skills); it
 
 | Skill | What it does | Clients |
 |---|---|---|
-| [`ambitious`](skills/ambitious/SKILL.md) | Upgrades a task or prompt along three axes (altitude, depth, range) into a more ambitious version. It delivers a proposal and stops for you to pick a direction, executes only after you confirm, and must run an external judge before declaring done. Invoke with `/ambitious <task>`. Written in Chinese | All |
+| [`ambitious`](skills/ambitious/SKILL.md) | Upgrades a task or prompt along three axes (altitude, depth, range) into a more ambitious version. It delivers a proposal and stops for you to pick a direction, executes only after you confirm, and must run an external judge before declaring done. Invoke with `/ambitious <task>`; it replies in your language | All |
 | [`grill-afk`](skills/grill-afk/SKILL.md) | A requirements interview that runs itself: a red-team loop walks the requirement tree instead of asking you node by node, and produces a PRD plus a list of the questions only you can answer | All; its subagent split is written for Claude Code, so other clients may run it single-threaded |
 | [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | Syncs mattpocock/skills to the latest upstream, re-applies local patches and summarises what changed upstream | Claude Code only. Marked internal, so `npx skills add` does not list it by default |
 
