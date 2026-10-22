@@ -1,37 +1,37 @@
 # skills
 
-> Personal agent skills by Comet32, installable into Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot and any other client that supports Agent Skills.
+English | [简体中文](README.zh-CN.md)
 
-我自己写、自己在用的全局 agent skill。每个 skill 是 `skills/<name>/SKILL.md`，遵循开放的 Agent Skills 格式，支持这一格式的 agent 客户端都能安装。
+Global agent skills I wrote and use myself. Each skill is `skills/<name>/SKILL.md` in the open Agent Skills format, so any agent client that supports the format can install it: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot and more.
 
-## 安装
+## Install
 
 ```bash
 npx skills add Comet32/skills
 ```
 
-安装器会让你选要装哪些 skill、装进哪些客户端。常用参数：
+The installer asks which skills to install and into which clients. Common options:
 
-| 想做的事 | 写法 |
+| To | Use |
 |---|---|
-| 先看有哪些 skill | `npx skills add Comet32/skills --list` |
-| 只装其中一个 | `npx skills add Comet32/skills --skill ambitious` |
-| 装到全局，所有项目可用 | 加 `-g` |
-| 指定客户端 | 加 `-a claude-code codex cursor` |
+| See what is available first | `npx skills add Comet32/skills --list` |
+| Install a single skill | `npx skills add Comet32/skills --skill ambitious` |
+| Install globally, for every project | add `-g` |
+| Pick the clients | add `-a claude-code codex cursor` |
 
-安装器是 [vercel-labs/skills](https://github.com/vercel-labs/skills)，它支持的客户端和各自的目录见其文档。
+The installer is [vercel-labs/skills](https://github.com/vercel-labs/skills); its docs list the supported clients and their directories.
 
 ## Skills
 
-| Skill | 做什么 | 客户端 |
+| Skill | What it does | Clients |
 |---|---|---|
-| [`ambitious`](skills/ambitious/SKILL.md) | 把一个任务或 prompt 沿高度、深度、广度三个方向升级成更有雄心的版本。先交付方案并停下等你选方向，确认后再执行；宣告完成前必须跑外部裁判。用 `/ambitious <任务>` 调用 | 全部 |
-| [`grill-afk`](skills/grill-afk/SKILL.md) | 自动运行的需求拷问：用红队循环代替逐条问人，产出一份 PRD，加上一份只有人能回答的问题清单 | 全部；其中的子代理分工按 Claude Code 写，其他客户端可能退化为单线程执行 |
-| [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | 把 mattpocock/skills 同步到最新上游，重新应用本地补丁，并总结上游变化 | 仅 Claude Code。标为 internal，`npx skills add` 默认不会列出它 |
+| [`ambitious`](skills/ambitious/SKILL.md) | Upgrades a task or prompt along three axes (altitude, depth, range) into a more ambitious version. It delivers a proposal and stops for you to pick a direction, executes only after you confirm, and must run an external judge before declaring done. Invoke with `/ambitious <task>`. Written in Chinese | All |
+| [`grill-afk`](skills/grill-afk/SKILL.md) | A requirements interview that runs itself: a red-team loop walks the requirement tree instead of asking you node by node, and produces a PRD plus a list of the questions only you can answer | All; its subagent split is written for Claude Code, so other clients may run it single-threaded |
+| [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | Syncs mattpocock/skills to the latest upstream, re-applies local patches and summarises what changed upstream | Claude Code only. Marked internal, so `npx skills add` does not list it by default |
 
-这几个 skill 都只在你明确调用时运行。Claude Code 靠 `disable-model-invocation` 保证这一点；其他客户端不认这个字段，靠 description 里的说明约束。
+All of these run only when you invoke them explicitly. Claude Code enforces this through `disable-model-invocation`; other clients ignore that field and rely on the wording of each description.
 
-## 在自己的机器上开发
+## Developing on your own machine
 
 ```bash
 git clone git@github.com:Comet32/skills.git ~/Documents/GitHub/skills
@@ -39,27 +39,27 @@ git clone git@github.com:Comet32/skills.git ~/Documents/GitHub/skills
 ~/Documents/GitHub/skills/scripts/link.sh
 ```
 
-`link.sh` 把 `skills/` 下的每个 skill 软链接到本机已安装客户端的全局 skill 目录，并把 `third-party/mattpocock/` 链接为 `~/.claude/skills-sync`。之后改仓库就是改已安装的 skill。已经存在、且不是本仓库软链接的目标不会被覆盖，只会被报告出来。新增 skill 后再跑一次即可。
+`link.sh` symlinks every skill under `skills/` into the global skills directory of each client installed on the machine, and links `third-party/mattpocock/` as `~/.claude/skills-sync`. From then on, editing the repo edits the installed skills. An existing target that is not already one of this repo's symlinks is never overwritten, only reported. Run it again after adding a skill.
 
-## 依赖的第三方 skills
+## Third-party skills I depend on
 
-第三方 skill 不复制进本仓库，原因见 [ADR 0001](docs/adr/0001-第三方-skill-不复制进仓库.md)。新机器上按需安装：
+Third-party skills are not copied into this repo; see [ADR 0001](docs/adr/0001-第三方-skill-不复制进仓库.md) (in Chinese) for why. Install them on a new machine as needed:
 
-| 来源 | 安装 | 内容 |
+| Source | Install | Contents |
 |---|---|---|
-| [mattpocock/skills](https://github.com/mattpocock/skills) | `third-party/mattpocock/sync.sh`，之后用 `/sync-mattpocock-skills` 升级 | `manifest` 中列出的 36 个 skill，加上 `patches/` 里的本地补丁；只装进 Claude Code |
-| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | `npx skills add Leonxlnx/taste-skill -g` | 前端设计品味系列，13 个 |
-| [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) | `npx skills add heygen-com/hyperframes -g` | HyperFrames 视频制作系列，11 个 |
+| [mattpocock/skills](https://github.com/mattpocock/skills) | `third-party/mattpocock/sync.sh`, then upgrade with `/sync-mattpocock-skills` | The 36 skills listed in `manifest`, plus the local patches in `patches/`; installed into Claude Code only |
+| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | `npx skills add Leonxlnx/taste-skill -g` | 13 frontend design-taste skills |
+| [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) | `npx skills add heygen-com/hyperframes -g` | 11 HyperFrames video-making skills |
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | `npx skills add vercel-labs/skills --skill find-skills -g` | `find-skills` |
 
-## 目录结构
+## Layout
 
 ```
-skills/<name>/SKILL.md     自建 skill，安装器从这里发现
-third-party/mattpocock/    mattpocock/skills 的同步脚本、清单和本地补丁
-scripts/link.sh            作者本机的软链接安装
-GLOSSARY.md                术语
-docs/adr/                  设计决定
+skills/<name>/SKILL.md     my own skills; the installer discovers them here
+third-party/mattpocock/    sync script, manifest and local patches for mattpocock/skills
+scripts/link.sh            symlink install for the author's machines
+GLOSSARY.md                terminology (in Chinese)
+docs/adr/                  design decisions (in Chinese)
 ```
 
 ## License
