@@ -1,0 +1,47 @@
+# Skills managed by sync.sh, pulled from github.com/mattpocock/skills.
+# One skill name per line; its upstream folder is found under skills/*/<name>/.
+# Skills not listed here are never touched.
+
+# engineering
+ask-matt
+code-review
+codebase-design
+diagnosing-bugs
+domain-modeling
+grill-with-docs
+implement
+implement-spec
+improve-codebase-architecture
+pr
+prototype
+research
+retro
+setup-matt-pocock-skills
+tdd
+to-spec
+to-tickets
+triage
+wayfinder
+wizard
+
+# productivity
+grill-me
+grilling
+handoff
+teach
+to-questionnaire
+wait-what
+writing-for-agents
+
+# misc
+git-guardrails-claude-code
+migrate-to-shoehorn
+scaffold-exercises
+setup-pre-commit
+
+# in-progress
+claude-handoff
+loop-me
+writing-beats
+writing-fragments
+writing-shape
