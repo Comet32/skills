@@ -30,6 +30,14 @@ npx skills add Comet32/skills
 | [`long-run`](skills/long-run/SKILL.md) | 启动一次长时间自主运行：先定一个可检查的完成标准，把任务清单记在文件里（上下文压缩后不丢），把互不相干的部分分给子代理并逐一核对证据，最后的汇报先列出等你决定的事项。用 `/long-run <任务>` 调用 | 全部；子代理分工按 Claude Code 写，其他客户端逐个顺序执行 |
 | [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | 把 mattpocock/skills 同步到最新上游，重新应用本地补丁，并总结上游变化 | 仅 Claude Code。标为 internal，`npx skills add` 默认不会列出它 |
 
+单独把某一个装到全局：
+
+```bash
+npx skills add Comet32/skills --skill ambitious -g
+npx skills add Comet32/skills --skill grill-afk -g
+npx skills add Comet32/skills --skill long-run -g
+```
+
 这几个 skill 都只在你明确调用时运行。Claude Code 靠 `disable-model-invocation` 保证这一点；其他客户端不认这个字段，靠 description 里的说明约束。
 
 ## 在自己的机器上开发

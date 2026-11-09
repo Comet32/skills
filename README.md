@@ -30,6 +30,14 @@ The installer is [vercel-labs/skills](https://github.com/vercel-labs/skills); it
 | [`long-run`](skills/long-run/SKILL.md) | Kicks off a long autonomous run: fixes a checkable finish line, keeps the task list in a ledger file that survives context compaction, fans independent units out to subagents and checks each one's evidence, and ends with a report that leads with what is blocked on you. Invoke with `/long-run <task>` | All; the subagent fan-out is written for Claude Code, other clients work the units one at a time |
 | [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | Syncs mattpocock/skills to the latest upstream, re-applies local patches and summarises what changed upstream | Claude Code only. Marked internal, so `npx skills add` does not list it by default |
 
+To install one skill on its own, globally:
+
+```bash
+npx skills add Comet32/skills --skill ambitious -g
+npx skills add Comet32/skills --skill grill-afk -g
+npx skills add Comet32/skills --skill long-run -g
+```
+
 All of these run only when you invoke them explicitly. Claude Code enforces this through `disable-model-invocation`; other clients ignore that field and rely on the wording of each description.
 
 ## Developing on your own machine
