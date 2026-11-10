@@ -28,6 +28,7 @@ npx skills add Comet32/skills
 | [`ambitious`](skills/ambitious/SKILL.md) | 把一个任务或 prompt 沿高度、深度、广度三个方向升级成更有雄心的版本。先交付方案并停下等你选方向，确认后再执行；宣告完成前必须跑外部裁判。用 `/ambitious <任务>` 调用。skill 本身用英文写，回复跟随你使用的语言 | 全部 |
 | [`grill-afk`](skills/grill-afk/SKILL.md) | 自动运行的需求拷问：用红队循环代替逐条问人，产出一份 PRD，加上一份只有人能回答的问题清单 | 全部；其中的子代理分工按 Claude Code 写，其他客户端可能退化为单线程执行 |
 | [`long-run`](skills/long-run/SKILL.md) | 启动一次长时间自主运行：先定一个可检查的完成标准，把任务清单记在文件里（上下文压缩后不丢），把互不相干的部分分给子代理并逐一核对证据，最后的汇报先列出等你决定的事项。用 `/long-run <任务>` 调用 | 全部；子代理分工按 Claude Code 写，其他客户端逐个顺序执行 |
+| [`local-chrome`](skills/local-chrome/SKILL.md) | 通过 127.0.0.1 上的 DevTools 端口驱动你本机正在运行的 Chrome：开一个新的前台 tab（保留你的登录状态），执行你写的步骤脚本（点击、输入、断言），保存截图和结果文件，最后只关掉它自己开的 tab。可选的常驻代理让 Chrome 只问一次 "Allow"，不必每次运行都确认。用 `/local-chrome` 调用 | 能执行 shell 命令的客户端；需要 Node 22+，且 Chrome 已开启远程调试 |
 | [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | 把 mattpocock/skills 同步到最新上游，重新应用本地补丁，并总结上游变化 | 仅 Claude Code。标为 internal，`npx skills add` 默认不会列出它 |
 
 单独把某一个装到全局：
@@ -36,6 +37,7 @@ npx skills add Comet32/skills
 npx skills add Comet32/skills --skill ambitious -g
 npx skills add Comet32/skills --skill grill-afk -g
 npx skills add Comet32/skills --skill long-run -g
+npx skills add Comet32/skills --skill local-chrome -g
 ```
 
 这几个 skill 都只在你明确调用时运行。Claude Code 靠 `disable-model-invocation` 保证这一点；其他客户端不认这个字段，靠 description 里的说明约束。
