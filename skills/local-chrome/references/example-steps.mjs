@@ -1,5 +1,6 @@
-// Example steps file for scripts/cdp.mjs. Copy it to the scratchpad and adapt. Run:
-//   node <skill-dir>/scripts/cdp.mjs steps.mjs <outDir> [--base https://app.example.com]
+// Example steps file. Runs under either driver. Copy it to the scratchpad and adapt. Run:
+//   node <skill-dir>/scripts/ego.mjs steps.mjs <outDir> [--base https://app.example.com]   (default: ego-browser)
+//   node <skill-dir>/scripts/cdp.mjs steps.mjs <outDir> [--base https://app.example.com]   (fallback: the user's Chrome)
 // Shapes shown: a first look at an unknown page, typing + a real click, an assertion behind the page,
 // and a write that cleans up after itself.
 

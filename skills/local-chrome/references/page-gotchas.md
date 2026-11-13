@@ -1,6 +1,6 @@
 # Page gotchas
 
-What made a correct page look broken, or a broken check look green, when driving pages with `cdp.mjs`. Each item names the snippet in `scripts/snippets.mjs` or the `page` method that handles it.
+What made a correct page look broken, or a broken check look green, when driving pages with `ego.mjs` or `cdp.mjs`. Each item names the snippet in `scripts/snippets.mjs` or the `page` method that handles it.
 
 ## Tabs and timing
 
